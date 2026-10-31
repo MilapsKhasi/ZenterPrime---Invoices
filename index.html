@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SK ENTERPRISE - Invoice Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link         rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen bg-gray-100 font-sans p-5 flex flex-col items-center">
+    <div class="max-w-[210mm] w-full bg-white shadow-none" id="invoice-container">
+        <div class="p-8 border-2 border-black" id="print-area">
+            <div class="flex justify-between items-start mb-6">
+                <div class="text-sm font-bold">GSTIN : 24CMAPK3117Q1ZZ</div>
+                <div class="text-sm font-bold">PHONE : 79907 13846</div>
+            </div>
+
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-medium tracking-wider mb-2">SK ENTERPRISE</h1>
+                <p class="text-sm">Shop No 28, Shiv Om Circle, Golden Point, Dared, Phase III, Dared, Jamnagar</p>
+            </div>
+
+            <div class="border border-black mb-6">
+                <div class="bg-gray-50 border-b border-black text-center py-2 font-bold text-lg">TAX INVOICE</div>
+                <div class="grid grid-cols-2">
+                    <div class="border-r border-black p-2 flex flex-col">
+                        <div class="flex border-b border-black pb-1 mb-1">
+                            <span class="font-bold w-32 text-sm">Bill To</span>
+                            <input id="billTo" class="flex-1 outline-none text-sm" placeholder="">
+                        </div>
+                        <div class="flex border-b border-black pb-1 mb-1">
+                            <span class="font-bold w-32 text-sm">GSTIN Number</span>
+                            <input id="gstinNumber" class="flex-1 outline-none text-sm" placeholder="">
+                        </div>
+                        <div class="flex">
+                            <span class="font-bold w-32 text-sm">Address</span>
+                            <textarea id="address" class="flex-1 outline-none text-sm resize-none" rows="2"
+                                placeholder=""></textarea>
+                        </div>
+                    </div>
+                    <div class="p-2 flex flex-col">
+                        <div class="flex border-b border-black pb-1 mb-1">
+                            <span class="font-bold w-32 text-sm">Bill Number</span>
+                            <input id="billNumber" class="flex-1 outline-none text-sm" placeholder="">
+                        </div>
+                        <div class="flex border-b border-black pb-1 mb-1">
+                            <span class="font-bold w-32 text-sm">Dated</span>
+                            <input id="dated" type="date" class="flex-1 outline-none text-sm">
+                        </div>
+                        <div class="flex">
+                            <span class="font-bold w-32 text-sm">Purchase Order</span>
+                            <input id="purchaseOrder" class="flex-1 outline-none text-sm" placeholder="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border border-black mb-6 overflow-hidden">
+                <table class="w-full text-[13px] border-collapse" id="items-table">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-black">
+                            <th class="border-r border-black p-1 w-8">SR</th>
+                            <th class="border-r border-black p-1">PARTICULARS</th>
+                            <th class="border-r border-black p-1 w-12">HSN</th>
+                            <th class="border-r border-black p-1 w-10">QTY</th>
+                            <th class="border-r border-black p-1 w-14">RATE</th>
+                            <th class="border-r border-black p-1 w-16">AMOUNT</th>
+                            <th class="border-r border-black p-1 w-14">TAX %</th>
+                            <th class="border-r border-black p-1 w-14">CGST</th>
+                            <th class="border-r border-black p-1 w-14">SGST</th>
+                            <th class="p-1 w-20">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-body">
+                    </tbody>
+                    <tfoot id="items-footer">
+                        <tr class="bg-gray-50 font-bold border-t border-black">
+                            <td colspan="3" class="border-r border-black p-1 text-right">Sub Total</td>
+                            <td id="total-qty" class="border-r border-black p-1 text-center"></td>
+                            <td class="border-r border-black p-1"></td>
+                            <td id="sub-total" class="border-r border-black p-1 text-right"></td>
+                            <td class="border-r border-black p-1"></td>
+                            <td id="total-cgst" class="border-r border-black p-1 text-right"></td>
+                            <td id="total-sgst" class="border-r border-black p-1 text-right"></td>
+                            <td id="table-grand-total" class="p-1 text-right"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="flex justify-end mb-6">
+                <div class="w-1/3 border border-black flex flex-col">
+                    <div class="flex border-b border-black bg-gray-50">
+                        <div class="flex-1 p-1 font-bold text-[10px] border-r border-black text-center uppercase">Total
+                            GST</div>
+                        <div id="summary-total-gst" class="w-20 p-1 text-right text-[10px] font-bold">0.00</div>
+                    </div>
+                    <div class="flex border-b border-black">
+                        <div class="flex-1 p-1 font-bold text-[10px] border-r border-black text-center">ROUND OFF</div>
+                        <div id="round-off-value" class="w-20 p-1 text-right text-[10px]"></div>
+                    </div>
+                    <div class="flex bg-gray-100">
+                        <div class="flex-1 p-2 font-black text-sm border-r border-black text-center">GRAND TOTAL</div>
+                        <div id="grand-total" class="w-20 p-2 text-right text-sm font-black"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-start">
+                <div class="w-2/3">
+                    <div class="mb-4">
+                        <h3 class="font-bold text-xs uppercase">Amount In Words</h3>
+                        <p id="grand-total-words" class="text-[10px] italic">Zero Rupees Only</p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xs uppercase">Bank Details</h3>
+                        <div class="text-[10px]">
+                            <p>Bank: AU Small Finance Bank</p>
+                            <p>A/c: 2402212258785542</p>
+                            <p>IFSC: AUBL0002122</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative w-1/3 text-center border-t border-black mt-12 pt-8">
+                    <img src="/src/SK_Enterprise_Signatory_Cropped.png" alt="Signatory"
+                        class="signatory-image">
+                    <p class="text-xs font-bold">For, SK ENTERPRISE</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 flex justify-center gap-4 print:hidden">
+            <button id="add-row-btn" class="px-4 py-2 bg-gray-800 text-white rounded shadow hover:bg-black">+
+                Row</button>
+            <button id="print-btn"
+                class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700">Print</button>
+            <button id="reset-btn"
+                class="px-4 py-2 bg-red-600 text-white rounded shadow hover:bg-red-700">Reset</button>
+            <button id="save-btn" class="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700">Save to
+                Register</button>
+        </div>
+    </div>
+    <script type="module" src="./script.js"></script>
+    <script type="module" src="./supabase-config.js"></script>
+    
+</body>
+
+</html>
